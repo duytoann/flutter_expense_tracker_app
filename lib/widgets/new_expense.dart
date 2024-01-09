@@ -10,18 +10,14 @@ class NewExpense extends StatefulWidget {
 }
 
 class _NewExpenseState extends State<NewExpense> {
-  var _enteredTitle = '';
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
-
-  void _saveTitleInput(String inputValue) {
-    _enteredTitle = inputValue;
-  }
 
   @override
   void dispose() {
     super.dispose();
     _titleController.dispose();
+    _amountController.dispose();
   }
 
   @override
@@ -50,8 +46,7 @@ class _NewExpenseState extends State<NewExpense> {
             children: [
               TextButton(
                 onPressed: () {
-                  _titleController.clear();
-                  _amountController.clear();
+                  Navigator.pop(context);
                 },
                 child: const Text('Cancel'),
               ),
