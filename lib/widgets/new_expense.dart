@@ -13,6 +13,12 @@ class _NewExpenseState extends State<NewExpense> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
 
+  void _presentDatePicker() {
+    final now = DateTime.now();
+    final firstDate = DateTime(now.year - 1, now.month, now.day);
+    showDatePicker(context: context, initialDate: now, firstDate: firstDate, lastDate: now);
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -33,14 +39,35 @@ class _NewExpenseState extends State<NewExpense> {
               label: Text('Title'),
             ),
           ),
-          TextField(
-            controller: _amountController,
-            maxLength: 50,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              label: Text('Amount'),
-              prefixText: '\$',
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _amountController,
+                  maxLength: 50,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    label: Text('Amount'),
+                    prefixText: '\$',
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 16,
+              ),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    const Text('Selected date'),
+                    IconButton(
+                      icon: const Icon(Icons.calendar_month),
+                      onPressed: _presentDatePicker,
+                    )
+                  ],
+                ),
+              )
+            ],
           ),
           Row(
             children: [
@@ -58,7 +85,7 @@ class _NewExpenseState extends State<NewExpense> {
                 child: const Text('Save Expense'),
               )
             ],
-          )
+          ),
         ],
       ),
     );
