@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_expenses_tracker/models/expense.dart';
 
 class NewExpense extends StatefulWidget {
-  const NewExpense({super.key});
+  const NewExpense({super.key, required this.onAddExpense});
+
+  final void Function(Expense expense) onAddExpense;
 
   @override
   State<StatefulWidget> createState() {
@@ -29,30 +31,38 @@ class _NewExpenseState extends State<NewExpense> {
   void _submitExpenseData() {
     final enteredAmount = double.tryParse(_amountController.text);
     final amountIsInvalid = enteredAmount == null || enteredAmount <= 0;
-    if (_titleController.text.trim().isEmpty || amountIsInvalid || _selectedDate == null) {
-      print("fluttoanng amountIsInvalid: $amountIsInvalid, titleIsInvalid: ${_titleController.text.trim().isEmpty}, selectedDate: $_selectedDate");
+    if (_titleController.text
+        .trim()
+        .isEmpty || amountIsInvalid || _selectedDate == null) {
+      // print("fluttoanng amountIsInvalid: $amountIsInvalid, titleIsInvalid: ${_titleController.text
+      //     .trim()
+      //     .isEmpty}, selectedDate: $_selectedDate");
       showDialog(
         context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text(
-            'Invalid input',
-            textAlign: TextAlign.center,
-          ),
-          content: const Text('Please make sure a valid title, amount, date and category was entered.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-              },
-              child: const Text('Okay'),
-            )
-          ],
-        ),
+        builder: (ctx) =>
+            AlertDialog(
+              title: const Text(
+                'Invalid input',
+                textAlign: TextAlign.center,
+              ),
+              content: const Text('Please make sure a valid title, amount, date and category was entered.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                  },
+                  child: const Text('Okay'),
+                )
+              ],
+            ),
       );
       return;
     }
 
-    // todo....
+    widget.onAddExpense(
+        Expense(title: _titleController.text, amount: enteredAmount, date: _selectedDate!, category: _selectedCategory)
+    );
+    Navigator.pop(context);
   }
 
   @override
@@ -115,13 +125,14 @@ class _NewExpenseState extends State<NewExpense> {
                   value: _selectedCategory,
                   items: Category.values
                       .map(
-                        (category) => DropdownMenuItem(
+                        (category) =>
+                        DropdownMenuItem(
                           value: category,
                           child: Text(
                             category.name.toUpperCase(),
                           ),
                         ),
-                      )
+                  )
                       .toList(),
                   onChanged: (value) {
                     if (value == null) {
