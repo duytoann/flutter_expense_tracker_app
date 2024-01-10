@@ -14,6 +14,8 @@ class _NewExpenseState extends State<NewExpense> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   DateTime? _selectedDate;
+  Category _selectedCategory = Category.leisure;
+
   Future<void> _presentDatePicker() async {
     final now = DateTime.now();
     final firstDate = DateTime(now.year - 1, now.month, now.day);
@@ -64,7 +66,7 @@ class _NewExpenseState extends State<NewExpense> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text( _selectedDate == null ? 'No date selected' : formatter.format(_selectedDate!)),
+                    Text(_selectedDate == null ? 'No date selected' : formatter.format(_selectedDate!)),
                     IconButton(
                       icon: const Icon(Icons.calendar_month),
                       onPressed: _presentDatePicker,
@@ -74,14 +76,40 @@ class _NewExpenseState extends State<NewExpense> {
               )
             ],
           ),
+          const SizedBox(
+            width: 16,
+          ),
           Row(
             children: [
-              TextButton(
+              DropdownButton(
+                  borderRadius: BorderRadius.circular(20),
+                  value: _selectedCategory,
+                  items: Category.values
+                      .map(
+                        (category) => DropdownMenuItem(
+                          value: category,
+                          child: Text(
+                            category.name.toUpperCase(),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    if (value == null) {
+                      return;
+                    }
+                    setState(() {
+                      _selectedCategory = value;
+                    });
+                  }),
+              const Spacer(),
+              ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
                 child: const Text('Cancel'),
               ),
+              const Spacer(),
               ElevatedButton(
                 onPressed: () {
                   print(_titleController.text);
